@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/benblair/aws-chicago-meetup-226541826/issues"
   },
-  "homepage": "https://github.com/benblair/aws-chicago-meetup-226541826#readme"
+  "homepage": "https://github.com/benblair/aws-chicago-meetup-226541826#readme",
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  }
 }
