@@ -30,7 +30,7 @@ var LAMBDA_ROLE = process.env.LAMBDA_ROLE || 'arn:aws:iam::147689183146:role/lam
 var AWS_ACCOUNT_ID = process.env.AWS_ACCOUNT_ID || '147689183146';
 var API_NAME = process.env.API_NAME || 'AWS Chicago';
 
-function createDistFolder (awsConfig, callback) {
+function createDistFolder (callback) {
     // Note for future reference: make sure the deployment directory
     // is a string that's not included in any
     // node_modules files or those will be excluded from the zip with
@@ -44,29 +44,29 @@ function createDistFolder (awsConfig, callback) {
                    return callback(err);
                }
                console.log('Created dist directory: ' + zipDir);
-               return callback(null, awsConfig, zipPath);
+               return callback(null, zipPath);
            });
        }
-       return callback(null, awsConfig, zipPath);
+       return callback(null, zipPath);
     });
 }
 
-function deleteZipFile (awsConfig, zipPath, callback) {
+function deleteZipFile (zipPath, callback) {
     fs.stat(zipPath, function (err, stats) {
         if (err) {
             // nothing to delete
-            return callback(null, awsConfig, zipPath);
+            return callback(null, zipPath);
         }
         fs.unlink(zipPath, function (err) {
             if (err) {
                 return callback(err);
             }
-            return callback(null, awsConfig, zipPath);
+            return callback(null, zipPath);
         });
     });
 }
 
-function createZipFile (awsConfig, zipPath, callback) {
+function createZipFile (zipPath, callback) {
 
     var zipArgs = [
         '-v',
@@ -90,7 +90,7 @@ function createZipFile (awsConfig, zipPath, callback) {
         }
         if (code === 0) {
             console.log('Created zip file...');
-            return callback(null, awsConfig, zipPath);
+            return callback(null, zipPath);
         }
         console.log('Zip Exited with ' + code +
             '. Try re-running with VERBOSE for more details.');
@@ -110,7 +110,7 @@ function createZipFile (awsConfig, zipPath, callback) {
     });
 }
 
-function uploadToS3(awsConfig, zipPath, callback) {
+function uploadToS3(zipPath, callback) {
     console.log('Uploading to S3. This is sometimes slow...');
     var s3 = new AWS.S3({
         apiVersion: '2006-03-01'
