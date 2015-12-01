@@ -4,7 +4,8 @@
   "description": "Code for a talk on Lambda &amp; API Gateway at the Dec 2, 2015 AWS Chicago Meetup",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "NODE_ENV=test mocha --timeout 30000",
+    "deploy": "node ./bin/deploy.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,12 @@
   "homepage": "https://github.com/benblair/aws-chicago-meetup-226541826#readme",
   "devDependencies": {
     "mocha": "^2.3.4"
+  },
+  "dependencies": {
+    "async": "^1.5.0",
+    "aws-sdk": "^2.2.19",
+    "ddb-local": "^0.2.0",
+    "node-uuid": "^1.4.7",
+    "semver-utils": "^1.1.1"
   }
 }
