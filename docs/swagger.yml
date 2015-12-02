@@ -1,0 +1,180 @@
+swagger: '2.0'
+info:
+  version: 0.1.0
+  title: Internet of Cats Things API
+  description: API for a talk on Lambda &amp; API Gateway at the Dec 2, 2015 AWS Chicago Meetup
+  contact:
+    name: Ben Blair
+    email: ben@smallloops.com
+    url: 'https://github.com/benblair/aws-chicago-meetup-226541826#readme'
+  license:
+    name: MIT
+    url: 'http://opensource.org/licenses/MIT'
+host: cat-api.smapploops.com
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /cats:
+    get:
+      description: Returns all cats
+      operationId: list
+      produces:
+        - application/json
+      parameters:
+        - name: status
+          in: query
+          description: status to filter by
+          required: false
+          type: string
+      responses:
+        '200':
+          description: catList
+          schema:
+            $ref: '#/definitions/catList'
+        '400':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+      x-amazon-apigateway-integration:
+        type: 'aws'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: "{\"operation\": \"list\",\"TableName\": \"cats\"}"
+        requestParameters:
+          integration.request.querystring.integrationQueryParam: method.request.querystring.status
+        responses:
+          '200':
+            statusCode: '200'
+          '400':
+            statusCode: '400'
+    post:
+      description: Creates a new cat. Name must be unique.
+      operationId: create
+      produces:
+        - application/json
+      parameters:
+        - name: cat
+          in: body
+          description: Cat to add
+          required: true
+          schema:
+            $ref: '#/definitions/cat'
+      responses:
+        '200':
+          description: catok
+          schema:
+            $ref: '#/definitions/cat'
+        '400':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+      x-amazon-apigateway-integration:
+        type: 'aws'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
+        httpMethod: 'POST'
+        requestTemplates:
+          application/json: "{\"operation\": \"create\",\"TableName\": \"cats\",\"Item\": $input.json('$')}"
+        responses:
+          '200':
+            statusCode: '200'
+          '400':
+            statusCode: '400'
+  /cats/{name}:
+    get:
+      description: 'Returns a cat by name'
+      operationId: get
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          description: name of cat to get
+          required: true
+          type: string
+      responses:
+        '200':
+          description: cat
+          schema:
+            $ref: '#/definitions/cat'
+        '400':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+      x-amazon-apigateway-integration:
+        type: 'aws'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: "{\"operation\": \"read\",\"TableName\": \"cats\",\"Key\": { \"name\": \"$input.params('name')\"}}"
+        requestParameters:
+          integration.request.querystring.integrationPathParam: method.request.querystring.name
+        responses:
+          '200':
+            statusCode: '200'
+          '400':
+            statusCode: '400'
+    put:
+      description: 'Updates a cat by name'
+      operationId: put
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          description: name of cat to update
+          required: true
+          type: string
+      responses:
+        '200':
+          description: cat
+          schema:
+            $ref: '#/definitions/cat'
+        '400':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+      x-amazon-apigateway-integration:
+        type: 'aws'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
+        httpMethod: 'PUT'
+        requestTemplates:
+          application/json: "{\"operation\": \"read\",\"TableName\": \"cats\",\"Item\": { \"name\": \"$input.params('name')\", \"status\": \"$input.path('$.status')\"}}"
+        requestParameters:
+          integration.request.querystring.integrationPathParam: method.request.querystring.name
+        responses:
+          '200':
+            statusCode: '200'
+          '400':
+            statusCode: '400'
+definitions:
+  catList:
+    type: array
+    items:
+      $ref: '#definitions/cat'
+  cat:
+    type: object
+    required:
+      - name
+      - status
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
