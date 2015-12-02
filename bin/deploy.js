@@ -25,7 +25,7 @@ var AWS = require('aws-sdk');
 var api = require('../api');
 
 var DEPLOY_DIR = process.env.DEPLOY_DIR || 'deploys';
-var DEPLOY_BUCKET = process.env.DEPLOY_BUCKET || ('deploys.' + name);
+var DEPLOY_BUCKET = process.env.DEPLOY_BUCKET || ('deploys-' + name);
 var LAMBDA_ROLE = process.env.LAMBDA_ROLE || 'arn:aws:iam::147689183146:role/lambda_dynamo';
 var AWS_ACCOUNT_ID = process.env.AWS_ACCOUNT_ID || '147689183146';
 var API_NAME = process.env.API_NAME || 'AWS Chicago';
@@ -174,12 +174,24 @@ function createLambda(name, s3path, callback) {
         MemorySize: 128,
         Timeout: 5
     };
+    var functionName = lambdaParams.FunctionName;
     lambda.createFunction(lambdaParams, function (err, result) {
         if (err) {
             return callback(err);
         }
         console.log('Created ' + result.FunctionArn);
-        callback(null, result);
+        lambdaParams = {
+            Action: 'lambda:InvokeFunction',
+            FunctionName: functionName,
+            Principal: "apigateway.amazonaws.com",
+            StatementId: 'Allow_Api_Gateway'
+        };
+        lambda.addPermission(lambdaParams, function(err, data) {
+            if (err) {
+                return callback(err);
+            }
+            return callback(null, result);
+        });
     });
 }
 
@@ -206,19 +218,7 @@ function updateLambda(name, s3path, callback) {
             if (err) {
                 return callback(err);
             }
-            lambdaParams = {
-                Action: 'lambda:InvokeFunction',
-                FunctionName: functionName,
-                Principal: "apigateway.amazonaws.com",
-                StatementId: 'Allow_Api_Gateway',
-                SourceAccount: AWS_ACCOUNT_ID
-            };
-            lambda.addPermission(lambdaParams, function(err, data) {
-                if (err) {
-                    return callback(err);
-                }
-                return callback(null, result);
-            });
+            return callback(null, result);
         });
     });
 }

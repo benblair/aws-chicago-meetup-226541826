@@ -42,7 +42,7 @@ paths:
             $ref: '#/definitions/errorModel'
       x-amazon-apigateway-integration:
         type: 'aws'
-        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:cats/invocations'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
         httpMethod: 'GET'
         requestTemplates:
           application/json: "{\"operation\": \"list\",\"TableName\": \"cats\"}"
@@ -76,7 +76,7 @@ paths:
             $ref: '#/definitions/errorModel'
       x-amazon-apigateway-integration:
         type: 'aws'
-        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:cats/invocations'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
         httpMethod: 'POST'
         requestTemplates:
           application/json: "{\"operation\": \"create\",\"TableName\": \"cats\",\"Item\": $input.json('$')}"
@@ -108,7 +108,7 @@ paths:
             $ref: '#/definitions/errorModel'
       x-amazon-apigateway-integration:
         type: 'aws'
-        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:cats/invocations'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
         httpMethod: 'GET'
         requestTemplates:
           application/json: "{\"operation\": \"read\",\"TableName\": \"cats\",\"Key\": { \"name\": \"$input.params('name')\"}}"
@@ -141,7 +141,7 @@ paths:
             $ref: '#/definitions/errorModel'
       x-amazon-apigateway-integration:
         type: 'aws'
-        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:cats/invocations'
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:147689183146:function:v1_cats/invocations'
         httpMethod: 'PUT'
         requestTemplates:
           application/json: "{\"operation\": \"read\",\"TableName\": \"cats\",\"Item\": { \"name\": \"$input.params('name')\", \"status\": \"$input.path('$.status')\"}}"
